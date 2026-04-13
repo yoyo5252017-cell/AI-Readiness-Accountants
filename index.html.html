@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Readiness Assessment for Accountants — NTUC PME x ISCA Pilot</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
+:root{
+  --navy:#0B2347;--blue:#185FA5;--blue-lt:#E6F1FB;
+  --gold:#B8860B;--gold-lt:#FDF6DC;--gold-mid:#D4A017;
+  --green:#2D6A4F;--green-lt:#EAF3EE;
+  --red:#A32D2D;--red-lt:#FCEBEB;
+  --amber:#854F0B;--amber-lt:#FAEEDA;
+  --text:#1a1a1a;--muted:#6b6b6b;--hint:#999;
+  --border:rgba(0,0,0,0.09);--border-mid:rgba(0,0,0,0.16);
+  --bg:#fff;--surface:#f8f7f4;--radius:8px;--radius-lg:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--surface);color:var(--text);min-height:100vh}
+
+/* ── Header ── */
+.hdr{background:var(--navy);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:62px;position:sticky;top:0;z-index:100}
+.hdr-right{display:flex;align-items:center;gap:14px}
+.isca-badge{font-size:11px;color:#7EB3E8;border:.5px solid rgba(255,255,255,0.2);padding:4px 10px;border-radius:20px;letter-spacing:.05em;white-space:nowrap}
+.pilot-tag{font-size:10px;background:var(--gold-mid);color:#fff;padding:3px 8px;border-radius:4px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+
+/* ── Hero banner ── */
+.hero-banner{background:var(--navy);padding:2.5rem 2rem 2rem;text-align:center;border-bottom:3px solid var(--gold-mid)}
+.hero-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7EB3E8;margin-bottom:.5rem}
+.hero-title{font-family:'DM Serif Display',serif;font-size:28px;color:#fff;line-height:1.25;margin-bottom:.5rem}
+.hero-title em{font-style:italic;color:var(--gold-mid)}
+.hero-sub{font-size:13px;color:#A8C4DE;line-height:1.6;max-width:520px;margin:0 auto .75rem}
+.hero-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:.75rem}
+.chip{font-size:11px;border:.5px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;color:#A8C4DE}
+
+/* ── Layout ── */
+.page{max-width:680px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.prog-wrap{margin-bottom:1.75rem}
+.prog-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--hint);margin-bottom:6px}
+.prog-bar{height:3px;background:var(--border);border-radius:2px}
+.prog-fill{height:3px;background:var(--gold-mid);border-radius:2px;transition:width .4s}
+
+/* ── Steps ── */
+.step{display:none}.step.active{display:block}
+.slabel{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--hint);margin-bottom:.4rem;font-weight:500}
+.stitle{font-family:'DM Serif Display',serif;font-size:21px;color:var(--text);margin-bottom:.4rem;line-height:1.3}
+.ssub{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:1.4rem}
+.context-box{background:var(--gold-lt);border-left:3px solid var(--gold-mid);border-radius:0 var(--radius) var(--radius) 0;padding:10px 13px;font-size:12px;color:var(--gold);line-height:1.55;margin-bottom:1.25rem}
+
+/* ── Options ── */
+.opts{display:grid;gap:8px;margin-bottom:1.4rem}
+.opt{border:.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;background:var(--bg);display:flex;align-items:flex-start;gap:12px;transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--border-mid);background:var(--surface)}
+.opt.sel{border-color:var(--blue);background:var(--blue-lt)}
+.radio{width:17px;height:17px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center}
+.opt.sel .radio{border-color:var(--blue);background:var(--blue)}
+.opt.sel .radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.ob{flex:1}.ol{font-size:14px;font-weight:500;color:var(--text)}.od{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+.opt.sel .ol{color:#0C447C}.opt.sel .od{color:var(--blue)}
+.sel-wrap{margin-bottom:1.4rem}
+.sel-wrap select{width:100%;padding:10px 12px;border:.5px solid var(--border-mid);border-radius:var(--radius);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;cursor:pointer}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.4rem}
+.tag{border:.5px solid var(--border);border-radius:20px;padding:7px 14px;font-size:13px;cursor:pointer;background:var(--bg);color:var(--muted);transition:all .12s;user-select:none}
+.tag:hover{border-color:var(--border-mid);color:var(--text)}
+.tag.on{background:var(--blue-lt);border-color:var(--blue);color:#0C447C}
+
+/* ── Buttons ── */
+.btnrow{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:.75rem}
+.btn{font-size:14px;padding:10px 22px;border-radius:var(--radius);border:.5px solid var(--border-mid);background:transparent;color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;transition:background .12s}
+.btn:hover{background:var(--surface)}
+.btn.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.pri:hover{background:var(--blue);border-color:var(--blue)}
+.btn.gold{background:var(--gold-mid);color:#fff;border-color:var(--gold-mid)}
+.btn.gold:hover{background:var(--gold);border-color:var(--gold)}
+
+/* ── Passport ── */
+.passport-wrap{max-width:640px;margin:0 auto}
+.passport{background:var(--bg);border:2px solid var(--navy);border-radius:16px;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 4px 24px rgba(11,35,71,.1)}
+.pp-header{background:var(--navy);padding:1.5rem 2rem;position:relative}
+.pp-watermark{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-family:'DM Serif Display',serif;font-size:48px;color:rgba(255,255,255,.06);font-style:italic;pointer-events:none}
+.pp-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem}
+.pp-doc-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#7EB3E8;margin-bottom:2px}
+.pp-doc-title{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;line-height:1.2}
+.pp-doc-sub{font-size:11px;color:#7EB3E8;margin-top:2px}
+.pp-number{text-align:right;font-size:11px;color:#7EB3E8}
+.pp-num-val{font-size:13px;font-weight:500;color:#fff;margin-top:2px;font-family:monospace}
+.pp-holder{display:flex;gap:1rem;align-items:center;margin-top:.75rem;padding-top:.75rem;border-top:.5px solid rgba(255,255,255,.15)}
+.pp-avatar{width:52px;height:52px;border-radius:50%;background:var(--gold-mid);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;color:#fff;flex-shrink:0;font-family:'DM Serif Display',serif}
+.pp-name-block .pp-name{font-size:16px;font-weight:500;color:#fff}
+.pp-name-block .pp-role{font-size:12px;color:#A8C4DE;margin-top:2px}
+.pp-name-block .pp-org{font-size:11px;color:#7EB3E8;margin-top:1px}
+
+.pp-score-band{background:var(--surface);padding:1.25rem 2rem;display:flex;gap:1.5rem;align-items:center;border-bottom:.5px solid var(--border)}
+.pp-ring-wrap{position:relative;width:80px;height:80px;flex-shrink:0}
+.pp-ring-wrap svg{width:80px;height:80px}
+.pp-ring-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.pp-score-big{font-size:22px;font-weight:500;color:var(--text);line-height:1}
+.pp-score-sm{font-size:10px;color:var(--muted);margin-top:1px}
+.pp-tier-block{flex:1}
+.pp-tier-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:3px}
+.pp-tier-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.pp-tier-badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-top:5px}
+
+.pp-body{padding:1.25rem 2rem}
+.pp-section{margin-bottom:1.25rem}
+.pp-sec-title{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--hint);margin-bottom:8px;padding-bottom:5px;border-bottom:.5px solid var(--border)}
+.dim-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:.75rem}
+.dim-box{background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center}
+.dim-val{font-size:18px;font-weight:500;margin-bottom:1px}
+.dim-lbl{font-size:10px;color:var(--muted);line-height:1.3}
+.dim-bar{height:3px;border-radius:2px;background:var(--border);margin-top:6px}
+.dim-fill{height:3px;border-radius:2px}
+
+/* stamps */
+.stamps-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stamp-box{border:.5px solid var(--border);border-radius:var(--radius);padding:10px;text-align:center}
+.stamp-box.earned{border-color:var(--gold-mid);background:var(--gold-lt)}
+.stamp-box.pending{opacity:.45}
+.stamp-circle{width:44px;height:44px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center}
+.stamp-box.earned .stamp-circle{background:var(--gold-mid)}
+.stamp-box.pending .stamp-circle{background:var(--border);border:.5px dashed var(--border-mid)}
+.stamp-name{font-size:11px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:2px}
+.stamp-box.earned .stamp-name{color:var(--gold)}
+.stamp-detail{font-size:10px;color:var(--muted);line-height:1.3}
+.stamp-date{font-size:9px;color:var(--gold);margin-top:3px;font-weight:500}
+
+/* gap courses */
+.gap-item{border:.5px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;background:var(--bg)}
+.gap-hdr{padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s}
+.gap-hdr:hover{background:var(--surface)}
+.gap-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.gap-nm{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.gap-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.g-crit{background:var(--red-lt);color:var(--red)}
+.g-mod{background:var(--amber-lt);color:var(--amber)}
+.g-low{background:var(--green-lt);color:var(--green)}
+.gap-chev{font-size:12px;color:var(--hint);transition:transform .2s}
+.gap-chev.open{transform:rotate(180deg)}
+.gap-bd{display:none;padding:0 12px 12px;border-top:.5px solid var(--border)}
+.gap-bd.open{display:block}
+.gap-why{font-size:12px;color:var(--muted);line-height:1.55;padding:8px 0 10px}
+.crs-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--hint);margin-bottom:6px}
+.crs-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px}
+.crs-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.crs-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:1px}
+.crs-prov{font-size:11px;color:var(--muted)}
+.crs-pill{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;flex-shrink:0}
+.p-isca{background:#E6F1FB;color:#185FA5}
+.p-lhub{background:#EAF3EE;color:#2D6A4F}
+.p-utap{background:#FDF6DC;color:var(--gold)}
+.crs-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.ctag{font-size:10px;background:var(--bg);color:var(--muted);padding:1px 6px;border-radius:3px;border:.5px solid var(--border)}
+.crs-link{font-size:11px;color:var(--blue);text-decoration:none;margin-left:auto;font-weight:500}
+.crs-link:hover{text-decoration:underline}
+
+/* CPE tracker */
+.cpe-track{background:var(--navy);border-radius:var(--radius);padding:14px 16px;margin-bottom:.75rem}
+.cpe-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cpe-label{font-size:11px;color:#7EB3E8;letter-spacing:.08em;text-transform:uppercase}
+.cpe-val{font-size:18px;font-weight:500;color:#fff}
+.cpe-bar-bg{height:6px;background:rgba(255,255,255,.15);border-radius:3px}
+.cpe-bar-fill{height:6px;border-radius:3px;background:var(--gold-mid);transition:width .6s}
+.cpe-note{font-size:11px;color:#A8C4DE;margin-top:6px}
+
+/* path */
+.path-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.path-num{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.path-body{flex:1}
+.path-title{font-size:13px;font-weight:500;color:var(--text)}
+.path-desc{font-size:12px;color:var(--muted);line-height:1.45;margin-top:2px}
+
+/* footer */
+.pp-footer{background:var(--surface);border-top:.5px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.pp-footer-note{font-size:10px;color:var(--muted);line-height:1.4}
+.pp-footer-logos{display:flex;align-items:center;gap:12px}
+.pp-logo-pill{font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px}
+.pp-ntuc{background:var(--navy);color:#fff}
+.pp-isca{background:var(--blue-lt);color:var(--blue)}
+
+.site-footer{background:var(--navy);color:#7EB3E8;text-align:center;font-size:12px;padding:1.5rem;margin-top:2rem}
+.restart-wrap{text-align:center;margin-top:1.5rem}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem}
+.act-btn{font-size:13px;padding:9px 16px;border-radius:var(--radius);border:.5px solid var(--border-mid);background:var(--bg);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;transition:background .12s;text-decoration:none;display:inline-block}
+.act-btn:hover{background:var(--surface)}
+.act-btn.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
+.act-btn.gold{background:var(--gold-mid);color:#fff;border-color:var(--gold-mid)}
+.print-btn{background:var(--gold-mid);color:#fff;border:none;padding:10px 22px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+@media print{.site-footer,.action-row,.restart-wrap,.btnrow,.hdr,.prog-wrap,.hero-banner,.page>.step:not(#s-result){display:none!important}.passport{box-shadow:none}}
+@media(max-width:520px){.dim-row,.stamps-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pp-header{padding:1rem 1.25rem}.pp-body{padding:1rem 1.25rem}.hdr{padding:0 1rem}.isca-badge{display:none}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <img src="data:image/png;base64,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l372ozgZwJRxVE187qquqKp5y6aVzz4k5XtYoHCVz3DGB/P/AEsH0iXKJ9JFBE8HLiTgg8B/lfBW1samY/TtTACN+OpLiPkWtx+CqlW70dqGfT1z6wxnSwSDdmizjeHePmFublTOqKcsbx4qC7K3WO13Jk837dQewHn9j4K91rtTUk1fp+uoqfHTTQuazJxk9y6tp1VYblG10Fwijee2OZ244c/0W163Sbu91qDHf0g81C9ySF4JbghX36xSV0DmskDmuBGQRwIVBVVmu1L0nWLbVxiMZeTEcNHfnsXQV168vdDBpevihr6d88sfRNYyUF3rHB4A92VSimdvqpKqMve3CobaazU1oqWwwS7+Rk8NNTpp9F2bXVvoblTVrP5oJWyD6HK9B0NVDW0cNXTPD4pmB7CO4rzmpNo3WFbp89XczrNE45MROC097T7PBY92oHVTQ5n7h4rZ7GbSRWiV0VR/bfjXqI5/Q8/srsVWbY7VJFcoLuxpMUzBHIR7Hjsz4j8KX2vW+nK5ozWilee1k7d3H17PutjVz2S60UlLPV0VRBKMOb0zT+vAqP0rpqGcPcw9v0VmXiKi2gt7oIZmknUHIOCOGefYfqqARTe/6CfBI6W0XGlqYTxEckzWvH17D9lEa6iqaGQR1MYY49mHh34Kl8FVFOMsPmqPuFnrLe4tqIyB18R3jRdZERZC1iIiIilOzjUDLJeSypdu0dUAyQ+4fY7/AO96uhpDmhzSCCMgjsK83KX6P1xW2WNtHVsNXRDg1ufXjH+U93yK0V1tjpz0sX7uY61Ymx210duZ6nWH+nnQ/DniD2c+w+Fxrr1tDRVzNyspIKho7BJGHY5rU2vV+nrgwGK4xRPP9yf1COfD7rbNraJzd5tZTEd4lb5qNOilidqCCrajrKOsjyx7XtPaCF0G6Y08128LNR5/+PK7cwpbVbKiaCCGnjhic/EbA0cBn2LCovVnpwTPdKNmO3MzfNQ7XWtLRNZKq226d1RPO3cL2tIY0Z48T28O5ZEMNRUvDTkjPatXXV9stUD5WljXAHAG6CTjQYGqq+V7pJXyOOXOcXHxKLFFOlzsSSclEREXxERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERFMtKaCrrtAysrJepUr+LMty947w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" alt="NTUC PME" style="height:38px;width:auto"/>
+  <div class="hdr-right">
+    <span class="isca-badge">ISCA Pilot Programme</span>
+    <span class="pilot-tag">Pilot</span>
+  </div>
+</header>
+
+<div class="hero-banner">
+  <div class="hero-label">NTUC PME &times; ISCA — AI Readiness Initiative</div>
+  <div class="hero-title">AI Readiness Assessment<br>for <em>Accountants</em></div>
+  <div class="hero-sub">A personalised assessment that maps your AI readiness gaps, recommends targeted upskilling, and generates your NTUC AI Readiness Passport — designed in collaboration with ISCA.</div>
+  <div class="hero-chips">
+    <span class="chip">Finance & Accounting PMEs</span>
+    <span class="chip">ISCA CPE-aligned</span>
+    <span class="chip">UTAP & SkillsFuture eligible</span>
+    <span class="chip">Free for NTUC members</span>
+  </div>
+</div>
+
+<main class="page">
+<div class="prog-wrap">
+  <div class="prog-meta"><span id="prog-label">Step 1 of 9</span><span id="prog-pct">11%</span></div>
+  <div class="prog-bar"><div class="prog-fill" id="prog" style="width:11%"></div></div>
+</div>
+<div id="steps">
+
+<!-- S0: Role -->
+<div class="step active" id="s0">
+  <div class="slabel">Step 1 of 9 — Your role</div>
+  <div class="stitle">What is your accounting specialisation?</div>
+  <div class="ssub">AI disruption varies significantly across accounting functions. Your specialisation shapes your risk profile and course recommendations.</div>
+  <div class="opts" id="q-role">
+    <div class="opt" onclick="pick(this,'role','audit')"><div class="radio"></div><div class="ob"><div class="ol">Audit & Assurance</div><div class="od">External/internal audit, statutory reporting</div></div></div>
+    <div class="opt" onclick="pick(this,'role','tax')"><div class="radio"></div><div class="ob"><div class="ol">Tax & Corporate Compliance</div><div class="od">Corporate tax, GST, transfer pricing</div></div></div>
+    <div class="opt" onclick="pick(this,'role','finance')"><div class="radio"></div><div class="ob"><div class="ol">Finance & FP&A</div><div class="od">Financial planning, budgeting, management reporting</div></div></div>
+    <div class="opt" onclick="pick(this,'role','advisory')"><div class="radio"></div><div class="ob"><div class="ol">Advisory & Consulting</div><div class="od">Business advisory, M&amp;A, risk consulting</div></div></div>
+    <div class="opt" onclick="pick(this,'role','corp-sec')"><div class="radio"></div><div class="ob"><div class="ol">Corporate Secretarial</div><div class="od">Corporate governance, company secretary</div></div></div>
+    <div class="opt" onclick="pick(this,'role','controller')"><div class="radio"></div><div class="ob"><div class="ol">Financial Controller / CFO</div><div class="od">Finance leadership, treasury, investor relations</div></div></div>
+  </div>
+  <div class="btnrow"><span></span><button class="btn pri" onclick="next(0)">Continue &#8594;</button></div>
+</div>
+
+<!-- S1: Seniority -->
+<div class="step" id="s1">
+  <div class="slabel">Step 2 of 9 — Seniority</div>
+  <div class="stitle">What is your career level?</div>
+  <div class="ssub">Your level determines the depth of AI skills most relevant to your responsibilities.</div>
+  <div class="opts" id="q-seniority">
+    <div class="opt" onclick="pick(this,'seniority',1)"><div class="radio"></div><div class="ob"><div class="ol">CFO / Partner / Director</div><div class="od">Senior leadership; strategic AI decisions</div></div></div>
+    <div class="opt" onclick="pick(this,'seniority',2)"><div class="radio"></div><div class="ob"><div class="ol">Senior Manager / Associate Director</div><div class="od">Leads teams; responsible for AI adoption in function</div></div></div>
+    <div class="opt" onclick="pick(this,'seniority',3)"><div class="radio"></div><div class="ob"><div class="ol">Manager / Assistant Manager</div><div class="od">Manages engagements; reviews AI-generated outputs</div></div></div>
+    <div class="opt" onclick="pick(this,'seniority',4)"><div class="radio"></div><div class="ob"><div class="ol">Senior Associate / Executive</div><div class="od">Applies AI tools daily; produces outputs for review</div></div></div>
+    <div class="opt" onclick="pick(this,'seniority',5)"><div class="radio"></div><div class="ob"><div class="ol">Associate / Junior Executive</div><div class="od">Early career; building foundational skills</div></div></div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(1)">&#8592; Back</button><button class="btn pri" onclick="next(1)">Continue &#8594;</button></div>
+</div>
+
+<!-- S2: Task nature -->
+<div class="step" id="s2">
+  <div class="slabel">Step 3 of 9 — Task exposure</div>
+  <div class="stitle">How much of your daily work involves routine, repetitive tasks?</div>
+  <div class="ssub">Think about activities like data entry, reconciliations, standard report generation, or document review.</div>
+  <div class="context-box">For accountants: routine tasks include transaction coding, bank recs, standard audit evidence requests, and GST filing preparation — all of which AI is already automating in Singapore firms.</div>
+  <div class="opts" id="q-rep">
+    <div class="opt" onclick="pick(this,'rep',10)"><div class="radio"></div><div class="ob"><div class="ol">More than 60% of my work is routine</div><div class="od">Data entry, reconciliations, standard filings</div></div></div>
+    <div class="opt" onclick="pick(this,'rep',7)"><div class="radio"></div><div class="ob"><div class="ol">About 40–60% is routine</div><div class="od">Mix of structured tasks and client-facing work</div></div></div>
+    <div class="opt" onclick="pick(this,'rep',4)"><div class="radio"></div><div class="ob"><div class="ol">About 20–40% is routine</div><div class="od">Mostly judgment, analysis, and advisory work</div></div></div>
+    <div class="opt" onclick="pick(this,'rep',1)"><div class="radio"></div><div class="ob"><div class="ol">Less than 20% is routine</div><div class="od">Highly complex, judgment-intensive work</div></div></div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(2)">&#8592; Back</button><button class="btn pri" onclick="next(2)">Continue &#8594;</button></div>
+</div>
+
+<!-- S3: AI usage -->
+<div class="step" id="s3">
+  <div class="slabel">Step 4 of 9 — Current AI use</div>
+  <div class="stitle">How do you currently use AI tools in your accounting work?</div>
+  <div class="ssub">Include tools like Microsoft Copilot, ChatGPT, CaseWare AI, Caseware IDEA, Bloomberg Tax AI, or any AI-assisted audit/finance platform.</div>
+  <div class="opts" id="q-usage">
+    <div class="opt" onclick="pick(this,'usage',1)"><div class="radio"></div><div class="ob"><div class="ol">Not using AI tools yet</div><div class="od">I rely on traditional methods and tools</div></div></div>
+    <div class="opt" onclick="pick(this,'usage',3)"><div class="radio"></div><div class="ob"><div class="ol">Experimenting occasionally</div><div class="od">Tried ChatGPT or Copilot for drafting, but not systematically</div></div></div>
+    <div class="opt" onclick="pick(this,'usage',6)"><div class="radio"></div><div class="ob"><div class="ol">Using regularly in my workflow</div><div class="od">AI tools are part of my weekly work process</div></div></div>
+    <div class="opt" onclick="pick(this,'usage',9)"><div class="radio"></div><div class="ob"><div class="ol">Advanced — leading AI adoption</div><div class="od">I implement, advise on, or build AI workflows for my team</div></div></div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(3)">&#8592; Back</button><button class="btn pri" onclick="next(3)">Continue &#8594;</button></div>
+</div>
+
+<!-- S4: Skills -->
+<div class="step" id="s4">
+  <div class="slabel">Step 5 of 9 — Skill self-assessment</div>
+  <div class="stitle">Which of these skills are you confident applying in your accounting work today?</div>
+  <div class="ssub">Select all that apply. Unselected skills become your personalised gap areas with specific course recommendations.</div>
+  <div class="tags" id="q-skills">
+    <div class="tag" onclick="tog(this,'prompt')">AI prompting for accounting tasks</div>
+    <div class="tag" onclick="tog(this,'copilot')">Microsoft Copilot / Office AI tools</div>
+    <div class="tag" onclick="tog(this,'data')">Data analytics & interpretation</div>
+    <div class="tag" onclick="tog(this,'excel')">Advanced Excel & Power BI</div>
+    <div class="tag" onclick="tog(this,'automate')">Workflow automation (Power Automate)</div>
+    <div class="tag" onclick="tog(this,'story')">Data storytelling & visualisation</div>
+    <div class="tag" onclick="tog(this,'ethics')">AI ethics, PDPA & data governance</div>
+    <div class="tag" onclick="tog(this,'audit-ai')">AI in audit & assurance</div>
+    <div class="tag" onclick="tog(this,'critical')">Critical review of AI-generated outputs</div>
+    <div class="tag" onclick="tog(this,'strategy')">AI strategy & change leadership</div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(4)">&#8592; Back</button><button class="btn pri" onclick="next(4)">Continue &#8594;</button></div>
+</div>
+
+<!-- S5: Data comfort -->
+<div class="step" id="s5">
+  <div class="slabel">Step 6 of 9 — Data fluency</div>
+  <div class="stitle">How comfortable are you working with large datasets beyond standard spreadsheets?</div>
+  <div class="ssub">AI-powered accounting tools are most effective when combined with strong data fluency.</div>
+  <div class="opts" id="q-data">
+    <div class="opt" onclick="pick(this,'data',1)"><div class="radio"></div><div class="ob"><div class="ol">Basic</div><div class="od">Comfortable with Excel; struggle with large or complex datasets</div></div></div>
+    <div class="opt" onclick="pick(this,'data',4)"><div class="radio"></div><div class="ob"><div class="ol">Intermediate</div><div class="od">Use pivot tables, VLOOKUP, and basic Power Query confidently</div></div></div>
+    <div class="opt" onclick="pick(this,'data',7)"><div class="radio"></div><div class="ob"><div class="ol">Advanced</div><div class="od">Power BI, DAX formulas, or data extraction tools (IDEA, ACL)</div></div></div>
+    <div class="opt" onclick="pick(this,'data',9)"><div class="radio"></div><div class="ob"><div class="ol">Expert</div><div class="od">SQL, Python, or large-scale financial data systems</div></div></div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(5)">&#8592; Back</button><button class="btn pri" onclick="next(5)">Continue &#8594;</button></div>
+</div>
+
+<!-- S6: Firm type -->
+<div class="step" id="s6">
+  <div class="slabel">Step 7 of 9 — Organisation</div>
+  <div class="stitle">What type of organisation do you work in?</div>
+  <div class="ssub">This helps match you to courses and pathways relevant to your work environment.</div>
+  <div class="opts" id="q-firm">
+    <div class="opt" onclick="pick(this,'firm','big4')"><div class="radio"></div><div class="ob"><div class="ol">Big 4 / Large international firm</div><div class="od">PwC, EY, KPMG, Deloitte or equivalent</div></div></div>
+    <div class="opt" onclick="pick(this,'firm','mid')"><div class="radio"></div><div class="ob"><div class="ol">Mid-tier accounting firm</div><div class="od">Baker Tilly, RSM, Mazars and similar</div></div></div>
+    <div class="opt" onclick="pick(this,'firm','sme')"><div class="radio"></div><div class="ob"><div class="ol">SME / boutique firm</div><div class="od">Smaller practice; often wears multiple hats</div></div></div>
+    <div class="opt" onclick="pick(this,'firm','corp')"><div class="radio"></div><div class="ob"><div class="ol">Corporate / In-house finance team</div><div class="od">Finance function within a company</div></div></div>
+    <div class="opt" onclick="pick(this,'firm','gov')"><div class="radio"></div><div class="ob"><div class="ol">Public sector / Statutory board</div><div class="od">Government agency, statutory board, GLC</div></div></div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(6)">&#8592; Back</button><button class="btn pri" onclick="next(6)">Continue &#8594;</button></div>
+</div>
+
+<!-- S7: Goal -->
+<div class="step" id="s7">
+  <div class="slabel">Step 8 of 9 — Your goal</div>
+  <div class="stitle">What is your primary goal for building AI readiness?</div>
+  <div class="ssub">This determines which gaps and courses to prioritise in your passport.</div>
+  <div class="opts" id="q-goal">
+    <div class="opt" onclick="pick(this,'goal','protect')"><div class="radio"></div><div class="ob"><div class="ol">Stay relevant in my current role</div><div class="od">Ensure AI does not displace my value — deepen what makes me indispensable</div></div></div>
+    <div class="opt" onclick="pick(this,'goal','promote')"><div class="radio"></div><div class="ob"><div class="ol">Accelerate my promotion or partnership track</div><div class="od">Stand out by demonstrating AI-powered productivity and leadership</div></div></div>
+    <div class="opt" onclick="pick(this,'goal','pivot')"><div class="radio"></div><div class="ob"><div class="ol">Move into an advisory or specialist role</div><div class="od">Shift from compliance/reporting to higher-value advisory, FP&amp;A, or CFO track</div></div></div>
+    <div class="opt" onclick="pick(this,'goal','lead')"><div class="radio"></div><div class="ob"><div class="ol">Lead AI adoption in my firm</div><div class="od">Drive AI strategy, governance, or digital transformation</div></div></div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(7)">&#8592; Back</button><button class="btn pri" onclick="next(7)">Continue &#8594;</button></div>
+</div>
+
+<!-- S8: Name + time -->
+<div class="step" id="s8">
+  <div class="slabel">Step 9 of 9 — Passport details</div>
+  <div class="stitle">Almost done — personalise your AI Passport</div>
+  <div class="ssub">Your name and learning commitment help us generate your personalised passport document.</div>
+  <div style="margin-bottom:1.25rem">
+    <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:6px">Your name (as it will appear on the passport)</label>
+    <input type="text" id="q-name" placeholder="e.g. Tan Wei Ming" style="width:100%;padding:10px 12px;border:.5px solid var(--border-mid);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--bg);color:var(--text)"/>
+  </div>
+  <div style="margin-bottom:1.25rem">
+    <label style="font-size:13px;font-weight:500;color:var(--text);display:block;margin-bottom:6px">Your organisation (optional)</label>
+    <input type="text" id="q-org" placeholder="e.g. Deloitte Singapore / ABC Pte Ltd" style="width:100%;padding:10px 12px;border:.5px solid var(--border-mid);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--bg);color:var(--text)"/>
+  </div>
+  <div class="slabel" style="margin-bottom:6px">Weekly learning commitment</div>
+  <div class="opts" id="q-time">
+    <div class="opt" onclick="pick(this,'time','light')"><div class="radio"></div><div class="ob"><div class="ol">1–2 hours per week</div><div class="od">Fits around busy audit / tax season schedule</div></div></div>
+    <div class="opt" onclick="pick(this,'time','moderate')"><div class="radio"></div><div class="ob"><div class="ol">3–5 hours per week</div><div class="od">Committed — outside peak season</div></div></div>
+    <div class="opt" onclick="pick(this,'time','intensive')"><div class="radio"></div><div class="ob"><div class="ol">6+ hours per week</div><div class="od">Career development mode</div></div></div>
+  </div>
+  <div class="btnrow"><button class="btn" onclick="prev(8)">&#8592; Back</button><button class="btn gold" onclick="showResults()">Generate my AI Passport &#8594;</button></div>
+</div>
+
+<div class="step" id="s-result"><div id="rc"></div></div>
+</div>
+</main>
+
+<footer class="site-footer">
+  NTUC PME AI Readiness for Accountants &nbsp;&middot;&nbsp; Pilot Programme in collaboration with ISCA &nbsp;&middot;&nbsp;
+  <a href="https://www.ntuc.org.sg/pme" style="color:#7EB3E8">ntuc.org.sg/pme</a>
+</footer>
+
+<script>
+const A={role:'',seniority:0,rep:0,usage:0,skills:[],data:0,firm:'',goal:'',time:'',name:'',org:''};
+const TOTAL=9;
+
+const ROLE_RISK={audit:9,tax:8,'corp-sec':9,finance:7,advisory:4,controller:5};
+const ALL_SKILLS=['prompt','copilot','data','excel','automate','story','ethics','audit-ai','critical','strategy'];
+
+const GAP_META={
+  prompt:{name:'AI prompting for accounting tasks',col:'#185FA5',
+    desc:'Knowing how to craft precise prompts for accounting tasks — drafting audit queries, summarising financial statements, or generating management commentary — is the single fastest productivity lever available to accountants today. ISCA's AI Fluency Programme is built around exactly this skill.'},
+  copilot:{name:'Microsoft Copilot & Office AI tools',col:'#1D9E75',
+    desc:'Copilot is being embedded into Excel, Word, Teams, and Outlook — the tools accountants use every day. Using Copilot to analyse financial data in Excel, generate board reports in Word, and summarise meeting notes is now a baseline expectation at Big 4 and corporate finance teams.'},
+  data:{name:'Data analytics & interpretation',col:'#534AB7',
+    desc:'AI tools surface vast amounts of data — but an accountant must interpret, validate, and present it. Data analytics is the bridge between AI output and professional judgement, and is one of the top in-demand skills identified by ISCA's AI for Accountancy Industry Taskforce.'},
+  excel:{name:'Advanced Excel & Power BI',col:'#185FA5',
+    desc:'Power BI, Power Query, and advanced Excel remain the most widely-used BI tools in Singapore finance functions. With Copilot now integrated, mastering these tools unlocks significant AI-powered productivity — from automated dashboards to AI-assisted DAX formulas.'},
+  automate:{name:'Workflow automation (Power Automate)',col:'#0F6E56',
+    desc:'Power Automate lets accountants eliminate repetitive manual workflows — approval chains, data extraction, report distribution — without coding. NTUC LearningHub's SFDW 2.0 programme covers this directly. Fast, high-impact, and immediately applicable.'},
+  story:{name:'Data storytelling & visualisation',col:'#D85A30',
+    desc:'Finance leaders who can turn complex financial data into clear visual narratives command significant influence with boards and clients. Data storytelling is listed by NTUC LearningHub as one of the top 5 most-enrolled skill areas — and is exactly what AI alone cannot do.'},
+  ethics:{name:'AI ethics, PDPA & data governance',col:'#888780',
+    desc:'Accountants handle highly sensitive financial and personal data. Understanding responsible AI use, PDPA obligations, and how to prevent AI-introduced bias or error in financial reporting is increasingly required — and directly relevant to ISCA's Govern AI pillar.'},
+  'audit-ai':{name:'AI in audit & assurance',col:'#A32D2D',
+    desc:'AI is transforming audit — from continuous monitoring and anomaly detection to AI-assisted evidence review. ISCA has identified AI in audit as a priority competency. Accountants in audit who cannot evaluate AI audit tools risk being outpaced by those who can.'},
+  critical:{name:'Critical review of AI-generated outputs',col:'#BA7517',
+    desc:'AI hallucinates, makes calculation errors, and can produce plausible-sounding but incorrect financial analysis. The professional skill of critically evaluating and validating AI outputs is now a core expectation — and the focus of NTUC LHUB's Thinking Academy.'},
+  strategy:{name:'AI strategy & change leadership',col:'#993C1D',
+    desc:'Senior accountants and finance leaders are increasingly expected to shape their firm's AI roadmap, manage resistance, and champion responsible adoption. NTUC LearningHub's Leadership Academy — launched in January 2026 — is designed specifically for this level.'}
+};
+
+const COURSES=[
+  {name:'ISCA AI Fluency Programme',prov:'ISCA (free for all Singapore accountants)',cost:'isca',dur:'Self-paced modules',skills:['prompt','copilot','ethics'],goals:['protect','promote','pivot','lead'],time:['light','moderate','intensive'],url:'https://isca.org.sg',tags:['ISCA CPE hours','Free for accountants','Launching 2026','IMDA-supported'],firms:['big4','mid','sme','corp','gov']},
+  {name:'ISCA Academy: Hands-On AI for Finance & Audit (Copilot)',prov:'ISCA Academy x Skybots',cost:'isca',dur:'1–2 days',skills:['copilot','automate','data'],goals:['protect','promote'],time:['light','moderate','intensive'],url:'https://iscacademy.sg',tags:['ISCA CPE hours','Launched Apr 2026','Microsoft Copilot','Practical'],firms:['big4','mid','sme','corp','gov']},
+  {name:'Generative AI for Business Professionals',prov:'NTUC LearningHub',cost:'lhub',dur:'2 days',skills:['prompt','copilot','story'],goals:['protect','promote'],time:['light','moderate','intensive'],url:'https://www.ntuclearninghub.com',tags:['UTAP eligible','SkillsFuture eligible','Non-technical','Beginner']},
+  {name:'AI Innovation Unleashed: Prompt Engineering (WSQ)',prov:'NTUC LearningHub',cost:'lhub',dur:'2 days',skills:['prompt'],goals:['protect','promote','pivot','lead'],time:['light','moderate','intensive'],url:'https://www.ntuclearninghub.com/en-gb/-/course/ai-innovation-unleashed-navigating-the-terrain-of-prompt-engineering-sf',tags:['WSQ-accredited','SOA awarded','UTAP eligible','SkillsFuture']},
+  {name:'SkillsFuture for Digital Workplace 2.0 (SFDW 2.0)',prov:'NTUC LearningHub (ICDL-certified)',cost:'lhub',dur:'2 days',skills:['automate','copilot','ethics','data'],goals:['protect','promote'],time:['light','moderate','intensive'],url:'https://www.ntuclearninghub.com',tags:['ICDL certified','UTAP eligible','Copilot included','Beginner-friendly']},
+  {name:'Data Analytics with Advanced Excel & Copilot',prov:'NTUC LearningHub',cost:'lhub',dur:'3 days',skills:['excel','data','story'],goals:['protect','promote'],time:['moderate','intensive'],url:'https://www.ntuclearninghub.com',tags:['UTAP eligible','SkillsFuture eligible','Copilot integrated','Intermediate']},
+  {name:'Data Visualisation with Microsoft Power BI',prov:'NTUC LearningHub',cost:'lhub',dur:'5 days',skills:['excel','data','story'],goals:['promote','pivot','lead'],time:['intensive'],url:'https://www.ntuclearninghub.com',tags:['UTAP eligible','AI-enabled','Power BI','Intermediate']},
+  {name:'Thinking Academy: Critical Thinking with GenAI',prov:'NTUC LearningHub (AI Singapore endorsed)',cost:'lhub',dur:'1–2 days',skills:['critical','prompt'],goals:['protect','promote','lead'],time:['light','moderate','intensive'],url:'https://www.ntuclearninghub.com',tags:['UTAP eligible','AI Singapore endorsed','Murdoch Univ endorsed','PME-focused']},
+  {name:'Leadership Academy: Leading with AI Awareness',prov:'NTUC LearningHub',cost:'lhub',dur:'7–24 hrs',skills:['strategy','critical','ethics'],goals:['promote','lead'],time:['moderate','intensive'],url:'https://www.ntuclearninghub.com',tags:['UTAP eligible','Senior leaders','New 2026']},
+  {name:'Leadership Academy: AI Change Management',prov:'NTUC LearningHub',cost:'lhub',dur:'7–24 hrs',skills:['strategy','ethics'],goals:['lead'],time:['intensive'],url:'https://www.ntuclearninghub.com',tags:['UTAP eligible','Executive level','Change management']},
+  {name:'ISCA Responsible AI Framework in Accountancy',prov:'ISCA x NTU',cost:'isca',dur:'Self-paced',skills:['ethics','critical','audit-ai'],goals:['protect','promote','lead'],time:['light','moderate','intensive'],url:'https://isca.org.sg',tags:['ISCA CPE hours','NTU-developed','Responsible AI','Governance']},
+  {name:'Data Analytics Bootcamp (SQL & Tableau)',prov:'Heicoders Academy (UTAP-eligible)',cost:'utap',dur:'~21 hrs',skills:['data','excel','story'],goals:['promote','pivot'],time:['moderate','intensive'],url:'https://heicodersacademy.com',tags:['UTAP eligible','SkillsFuture eligible','Certificate','Intermediate']},
+  {name:'Workflow Automation with Power Automate',prov:'Microsoft / NTUC LearningHub',cost:'lhub',dur:'1–2 days',skills:['automate','copilot'],goals:['protect','promote'],time:['light','moderate','intensive'],url:'https://www.ntuclearninghub.com',tags:['UTAP eligible','No-code','Practical','Beginner']},
+  {name:'SCTP: AI Operations Specialist',prov:'NTUC LearningHub (IMDA-partnered)',cost:'lhub',dur:'Full programme',skills:['data','automate','strategy','critical'],goals:['pivot','lead'],time:['intensive'],url:'https://www.ntuclearninghub.com',tags:['Up to 90% funding','IMDA partnered','Career conversion','Audit & Finance track']},
+];
+
+function pick(el,key,val){el.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');A[key]=val}
+function tog(el,key){el.classList.toggle('on');A.skills=el.classList.contains('on')?[...A.skills,key]:A.skills.filter(s=>s!==key)}
+
+function setProgress(step){
+  const pct=Math.round(((step+1)/(TOTAL+1))*100);
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-label').textContent=step<TOTAL?'Step '+(step+1)+' of '+TOTAL:'Complete';
+}
+
+function next(cur){
+  if(cur===0&&!A.role){alert('Please select your accounting specialisation.');return}
+  const km={1:'seniority',2:'rep',3:'usage',5:'data',6:'firm',7:'goal'};
+  if(km[cur]&&!A[km[cur]]){alert('Please select an option.');return}
+  document.getElementById('s'+cur).classList.remove('active');
+  document.getElementById('s'+(cur+1)).classList.add('active');
+  setProgress(cur+1);window.scrollTo(0,0);
+}
+function prev(cur){
+  document.getElementById('s'+cur).classList.remove('active');
+  document.getElementById('s'+(cur-1)).classList.add('active');
+  setProgress(cur-1);window.scrollTo(0,0);
+}
+
+function computeScores(){
+  const riskRaw=((ROLE_RISK[A.role]||6)+A.rep)/2;
+  const risk=Math.min(10,Math.round(riskRaw));
+  const lit=Math.min(10,Math.round((A.usage+A.data)/2));
+  const skillScore=Math.min(10,A.skills.length);
+  const gaps=ALL_SKILLS.filter(s=>!A.skills.includes(s));
+  const readiness=Math.min(100,Math.round(lit*4+skillScore*3+((10-risk)/10)*30));
+  return{risk,lit,skillScore,gaps,readiness};
+}
+
+function getTier(score){
+  if(score>=80)return{name:'AI Champion',badge:'Platinum',col:'#0B2347',bg:'#E6F1FB',desc:'You are at the leading edge of AI readiness for Singapore accountants. Focus on mentoring others and driving firm-wide adoption.'};
+  if(score>=65)return{name:'AI Ready',badge:'Gold',col:'#B8860B',bg:'#FDF6DC',desc:'You have strong AI literacy and are well-positioned for the AI-augmented accounting environment. Close remaining gaps to reach Champion level.'};
+  if(score>=45)return{name:'Developing',badge:'Silver',col:'#5F5E5A',bg:'#F1EFE8',desc:'You have foundational awareness but meaningful skill gaps remain. A focused 6-month upskilling plan will shift your position significantly.'};
+  return{name:'Building Foundations',badge:'Bronze',col:'#CD7F32',bg:'#FAF0E6',desc:'Your role faces significant AI disruption exposure and your readiness needs urgent attention. Start with the critical gaps — UTAP and ISCA programmes cover your costs.'};
+}
+
+function urgency(gap){
+  if(['prompt','copilot','critical','audit-ai'].includes(gap))return'crit';
+  if(['data','excel','automate','ethics'].includes(gap))return'mod';
+  return'low';
+}
+
+function getCoursesForGap(gap){
+  return COURSES.filter(c=>
+    c.skills.includes(gap)&&
+    (c.goals.includes(A.goal)||c.goals.includes('protect'))&&
+    c.time.includes(A.time)&&
+    (!c.firms||c.firms.includes(A.firm))
+  ).slice(0,2);
+}
+
+function pillClass(cost){return cost==='isca'?'p-isca':cost==='lhub'?'p-lhub':'p-utap'}
+function pillLabel(cost){return cost==='isca'?'ISCA programme':cost==='lhub'?'NTUC LearningHub':'UTAP eligible'}
+
+function passportNum(){
+  const d=new Date();
+  return 'NTUC-ACC-'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-'+Math.floor(1000+Math.random()*9000);
+}
+
+function cpeEstimate(gaps){
+  const hoursMap={crit:16,mod:12,low:8};
+  return gaps.reduce((t,g)=>t+hoursMap[urgency(g)],0);
+}
+
+function renderGaps(gapList,badgeClass,badgeLabel,dotCol){
+  return gapList.map(g=>{
+    const meta=GAP_META[g];
+    const courses=getCoursesForGap(g);
+    const cHTML=courses.length?courses.map(c=>
+      `<div class="crs-card"><div class="crs-top"><div><div class="crs-name">${c.name}</div><div class="crs-prov">${c.prov} &middot; ${c.dur}</div></div><span class="crs-pill ${pillClass(c.cost)}">${pillLabel(c.cost)}</span></div><div class="crs-tags">${c.tags.map(t=>`<span class="ctag">${t}</span>`).join('')}<a class="crs-link" href="${c.url}" target="_blank">View &rarr;</a></div></div>`
+    ).join(''):'<p style="font-size:12px;color:var(--muted);padding:6px 0">Adjust your time filter for more options.</p>';
+    const id='g-'+g;
+    return `<div class="gap-item"><div class="gap-hdr" onclick="toggleG('${id}')"><div class="gap-dot" style="background:${dotCol}"></div><div class="gap-nm">${meta.name}</div><span class="gap-badge ${badgeClass}">${badgeLabel}</span><span class="gap-chev" id="chev-${id}">&#9660;</span></div><div class="gap-bd" id="${id}"><div class="gap-why">${meta.desc}</div><div class="crs-label">NTUC & ISCA courses to close this gap</div>${cHTML}</div></div>`;
+  }).join('');
+}
+
+function showResults(){
+  if(!A.time){alert('Please select your time commitment.');return}
+  A.name=document.getElementById('q-name').value.trim()||'NTUC PME Member';
+  A.org=document.getElementById('q-org').value.trim();
+  document.getElementById('s8').classList.remove('active');
+  document.getElementById('s-result').classList.add('active');
+  setProgress(TOTAL);window.scrollTo(0,0);
+
+  const sc=computeScores();
+  const tier=getTier(sc.readiness);
+  const critGaps=sc.gaps.filter(g=>urgency(g)==='crit');
+  const modGaps=sc.gaps.filter(g=>urgency(g)==='mod');
+  const lowGaps=sc.gaps.filter(g=>urgency(g)==='low');
+  const totalGaps=sc.gaps.length;
+  const riskCol=sc.risk>=7?'#A32D2D':sc.risk>=4?'#854F0B':'#2D6A4F';
+  const litCol=sc.lit>=7?'#2D6A4F':sc.lit>=4?'#854F0B':'#A32D2D';
+  const ringCol=sc.readiness>=65?'#2D6A4F':sc.readiness>=45?'#D4A017':'#A32D2D';
+  const r=33,circ=2*Math.PI*r,filled=(sc.readiness/100*circ).toFixed(1);
+  const pNum=passportNum();
+  const cpe=cpeEstimate(sc.gaps);
+  const estWeeks=A.time==='light'?totalGaps*6:A.time==='moderate'?totalGaps*3:totalGaps*2;
+  const initials=A.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const roleLabels={'audit':'Audit & Assurance','tax':'Tax & Compliance','finance':'Finance & FP&A','advisory':'Advisory & Consulting','corp-sec':'Corporate Secretarial','controller':'Financial Controller/CFO'};
+  const firmLabels={'big4':'Big 4 Firm','mid':'Mid-tier Firm','sme':'SME Practice','corp':'Corporate Finance','gov':'Public Sector'};
+  const goalLabel={protect:'Stay relevant',promote:'Accelerate promotion',pivot:'Move to advisory',lead:'Lead AI adoption'}[A.goal];
+  const timeLabel={light:'1–2 hrs/week',moderate:'3–5 hrs/week',intensive:'6+ hrs/week'}[A.time];
+  const today=new Date().toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'});
+
+  // Earned stamps (based on skills confirmed)
+  const stampDefs=[
+    {key:'prompt',name:'AI Prompting',sub:'Core AI literacy'},
+    {key:'copilot',name:'Microsoft Copilot',sub:'Office AI tools'},
+    {key:'audit-ai',name:'AI in Audit',sub:'Assurance technology'},
+    {key:'ethics',name:'Responsible AI',sub:'Governance & PDPA'},
+    {key:'data',name:'Data Analytics',sub:'Financial insights'},
+    {key:'strategy',name:'AI Leadership',sub:'Change management'},
+  ];
+
+  const stampsHTML=stampDefs.map(s=>{
+    const earned=A.skills.includes(s.key);
+    return `<div class="stamp-box ${earned?'earned':'pending'}">
+      <div class="stamp-circle">${earned?`<svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 10l3.5 3.5L15 7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`:`<svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>`}</div>
+      <div class="stamp-name">${s.name}</div>
+      <div class="stamp-detail">${s.sub}</div>
+      ${earned?`<div class="stamp-date">Self-assessed &middot; ${today.split(' ')[2]}</div>`:''}
+    </div>`;
+  }).join('');
+
+  const pathSteps=critGaps.slice(0,3).map((g,i)=>
+    `<div class="path-step"><div class="path-num">${i+1}</div><div class="path-body"><div class="path-title">${GAP_META[g].name}</div><div class="path-desc">Highest impact for your goal: ${goalLabel}</div></div></div>`
+  ).join('');
+
+  document.getElementById('rc').innerHTML=`
+<div class="passport-wrap">
+
+  <!-- PASSPORT DOCUMENT -->
+  <div class="passport" id="passport-doc">
+    <div class="pp-header">
+      <div class="pp-watermark">AI</div>
+      <div class="pp-top">
+        <div>
+          <div class="pp-doc-label">NTUC PME &times; ISCA Pilot</div>
+          <div class="pp-doc-title">AI Readiness Passport</div>
+          <div class="pp-doc-sub">Accountancy Professional Edition</div>
+        </div>
+        <div class="pp-number">
+          <div class="pp-doc-label">Passport No.</div>
+          <div class="pp-num-val">${pNum}</div>
+          <div style="font-size:10px;color:#7EB3E8;margin-top:3px">Issued ${today}</div>
+        </div>
+      </div>
+      <div class="pp-holder">
+        <div class="pp-avatar">${initials}</div>
+        <div class="pp-name-block">
+          <div class="pp-name">${A.name}</div>
+          <div class="pp-role">${roleLabels[A.role]||A.role} &middot; ${firmLabels[A.firm]||A.firm}</div>
+          ${A.org?`<div class="pp-org">${A.org}</div>`:''}
+        </div>
+      </div>
+    </div>
+
+    <!-- Score band -->
+    <div class="pp-score-band">
+      <div class="pp-ring-wrap">
+        <svg viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--border)" stroke-width="7"/>
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="${ringCol}" stroke-width="7" stroke-linecap="round"
+            stroke-dasharray="${filled} ${circ.toFixed(1)}" transform="rotate(-90 40 40)"/>
+        </svg>
+        <div class="pp-ring-inner"><div class="pp-score-big">${sc.readiness}</div><div class="pp-score-sm">/100</div></div>
+      </div>
+      <div class="pp-tier-block">
+        <div class="pp-tier-name">${tier.name}</div>
+        <div class="pp-tier-desc">${tier.desc}</div>
+        <span class="pp-tier-badge" style="background:${tier.bg};color:${tier.col}">${tier.badge} Level &middot; ${totalGaps} gap${totalGaps!==1?'s':''} to close</span>
+      </div>
+    </div>
+
+    <div class="pp-body">
+
+      <!-- Dimensions -->
+      <div class="pp-section">
+        <div class="pp-sec-title">AI readiness dimensions</div>
+        <div class="dim-row">
+          <div class="dim-box"><div class="dim-val" style="color:${riskCol}">${sc.risk}/10</div><div class="dim-lbl">Disruption<br>risk</div><div class="dim-bar"><div class="dim-fill" style="width:${sc.risk*10}%;background:${riskCol}"></div></div></div>
+          <div class="dim-box"><div class="dim-val" style="color:${litCol}">${sc.lit}/10</div><div class="dim-lbl">AI tool<br>literacy</div><div class="dim-bar"><div class="dim-fill" style="width:${sc.lit*10}%;background:${litCol}"></div></div></div>
+          <div class="dim-box"><div class="dim-val" style="color:#185FA5">${sc.skillScore}/10</div><div class="dim-lbl">Skills<br>confirmed</div><div class="dim-bar"><div class="dim-fill" style="width:${sc.skillScore*10}%;background:#185FA5"></div></div></div>
+        </div>
+      </div>
+
+      <!-- CPE tracker -->
+      <div class="pp-section">
+        <div class="pp-sec-title">ISCA CPE pathway estimate</div>
+        <div class="cpe-track">
+          <div class="cpe-top">
+            <div class="cpe-label">Estimated CPE hours to close all gaps</div>
+            <div class="cpe-val">~${cpe} hrs</div>
+          </div>
+          <div class="cpe-bar-bg"><div class="cpe-bar-fill" style="width:${Math.min(100,Math.round((sc.skillScore/10)*100))}%"></div></div>
+          <div class="cpe-note">ISCA members earn CPE hours for completing ISCA-endorsed and NTUC LearningHub courses. Upon completion, stamps are added to your passport. Target: ISCA AI Readiness Badge.</div>
+        </div>
+      </div>
+
+      <!-- Skill stamps -->
+      <div class="pp-section">
+        <div class="pp-sec-title">Skill stamps — self-assessed</div>
+        <div class="stamps-grid">${stampsHTML}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">Stamps are self-assessed at time of passport generation. Course-verified stamps are issued upon completion of ISCA-endorsed or NTUC LearningHub courses and validated by your training provider.</div>
+      </div>
+
+      <!-- Summary -->
+      <div class="pp-section">
+        <div class="pp-sec-title">Passport summary</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:var(--surface);border-radius:var(--radius);padding:10px 12px"><div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--hint);margin-bottom:4px">Career goal</div><div style="font-size:12px;color:var(--text)">${goalLabel}</div></div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:10px 12px"><div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--hint);margin-bottom:4px">Completion estimate</div><div style="font-size:12px;color:var(--text)">~${estWeeks} weeks at ${timeLabel}</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Passport footer -->
+    <div class="pp-footer">
+      <div class="pp-footer-note">This passport is generated by NTUC PME as part of the ISCA Pilot Programme.<br>For verification, contact pme@ntuc.org.sg with passport number ${pNum}.</div>
+      <div class="pp-footer-logos">
+        <span class="pp-logo-pill pp-ntuc">NTUC PME</span>
+        <span class="pp-logo-pill pp-isca">ISCA Pilot</span>
+      </div>
+    </div>
+  </div><!-- /passport -->
+
+  <!-- Print / Download -->
+  <div style="text-align:center;margin-bottom:1.5rem">
+    <button class="print-btn" onclick="window.print()">&#8595; Save / Print Passport</button>
+  </div>
+
+  <!-- Gap analysis -->
+  ${totalGaps>0?`
+  <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1rem;padding-bottom:8px;border-bottom:.5px solid var(--border)">Your personalised learning plan — ${totalGaps} gap${totalGaps!==1?'s':''} identified</div>
+  ${pathSteps.length?`<div style="background:var(--green-lt);border-radius:var(--radius);padding:12px 14px;margin-bottom:1rem"><div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px">Recommended sequence</div>${pathSteps}</div>`:''}
+  ${critGaps.length?`<div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--hint);margin-bottom:8px;padding-bottom:5px;border-bottom:.5px solid var(--border)">Critical gaps — address first</div>${renderGaps(critGaps,'g-crit','Critical','#A32D2D')}`:''}
+  ${modGaps.length?`<div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--hint);margin:12px 0 8px;padding-bottom:5px;border-bottom:.5px solid var(--border)">Moderate gaps — within 6 months</div>${renderGaps(modGaps,'g-mod','Moderate','#D4A017')}`:''}
+  ${lowGaps.length?`<div style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--hint);margin:12px 0 8px;padding-bottom:5px;border-bottom:.5px solid var(--border)">Lower priority — build over time</div>${renderGaps(lowGaps,'g-low','Lower priority','#2D6A4F')}`:''}
+  `:`<div style="background:var(--green-lt);border-radius:var(--radius);padding:16px;font-size:14px;color:var(--green);margin-bottom:1.25rem">Excellent — you have confirmed skills across all areas. You are positioned to earn an ISCA AI Champion designation. Contact your NTUC PME Consultant to discuss next steps.</div>`}
+
+  <!-- Actions -->
+  <div style="border-top:.5px solid var(--border);padding-top:1rem;margin-top:1rem">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Ready to activate your passport? Speak to an NTUC PME Consultant or enrol in your first ISCA-endorsed course today.</div>
+    <div class="action-row">
+      <a href="https://www.ntuc.org.sg/pme" target="_blank" class="act-btn pri">Book PME Consultant &rarr;</a>
+      <a href="https://isca.org.sg" target="_blank" class="act-btn">ISCA AI programmes &rarr;</a>
+      <a href="https://www.ntuclearninghub.com" target="_blank" class="act-btn">NTUC LearningHub &rarr;</a>
+    </div>
+  </div>
+  <div class="restart-wrap"><button class="btn" onclick="restart()">Retake assessment</button></div>
+</div>`;
+}
+
+function toggleG(id){const b=document.getElementById(id);const c=document.getElementById('chev-'+id);const o=b.classList.contains('open');b.classList.toggle('open',!o);c.classList.toggle('open',!o)}
+function restart(){Object.assign(A,{role:'',seniority:0,rep:0,usage:0,skills:[],data:0,firm:'',goal:'',time:'',name:'',org:''});document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('s0').classList.add('active');document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));document.querySelectorAll('.tag').forEach(t=>t.classList.remove('on'));document.getElementById('q-name').value='';document.getElementById('q-org').value='';setProgress(0);window.scrollTo(0,0)}
+</script>
+</body>
+</html>
